@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productivity Clock</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      [hidden] { display: none !important; }
+
+      body {
+        width: 360px;
+        background: #f5ede2;
+        color: #1e1916;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        user-select: none;
+        overflow-x: hidden;
+      }
+
+      /* ═══ HEADER ═══ */
+      .header {
+        display: flex; align-items: center; gap: 9px;
+        padding: 13px 15px 12px;
+        border-bottom: 1px solid rgba(180,100,60,0.10);
+      }
+      .header img { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; }
+      .header-name { flex: 1; font-size: 0.88rem; font-weight: 700; }
+      .btn-stats {
+        font-size: 0.70rem; font-weight: 700; color: #c9654a;
+        background: rgba(201,101,74,0.09); border: 1px solid rgba(201,101,74,0.18);
+        border-radius: 7px; padding: 4px 10px; cursor: pointer;
+        white-space: nowrap; transition: background 0.15s;
+      }
+      .btn-stats:hover { background: rgba(201,101,74,0.18); }
+
+      /* ═══ TODAY CARD ═══ */
+      .today-card {
+        margin: 12px 14px 0;
+        background: #fff8ee;
+        border: 1px solid rgba(201,101,74,0.12);
+        border-radius: 16px;
+        padding: 14px 16px 13px;
+      }
+      .today-eyebrow {
+        font-size: 0.57rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: #9e7c66; margin-bottom: 4px;
+      }
+      .today-value {
+        font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em;
+        color: #1e1916; font-variant-numeric: tabular-nums;
+        line-height: 1.0; margin-bottom: 8px;
+      }
+      .status-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 0.71rem; font-weight: 600; color: #9e7c66;
+        background: rgba(158,124,102,0.09); border-radius: 20px;
+        padding: 3px 10px; max-width: 100%; overflow: hidden; transition: all 0.2s;
+      }
+      .status-chip.live { color: #c9654a; background: rgba(201,101,74,0.10); }
+      .status-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: currentColor; flex-shrink: 0;
+      }
+      .status-chip.live .status-dot { animation: blink 1.4s ease-in-out infinite; }
+      .status-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+      /* Goal bar — lives inside today-card */
+      .goal-bar-wrap { margin-top: 10px; }
+      .goal-track {
+        height: 5px; background: rgba(201,101,74,0.11);
+        border-radius: 3px; overflow: hidden; margin-bottom: 5px;
+      }
+      .goal-fill {
+        height: 100%; width: 0%; border-radius: 3px;
+        background: #c9654a;
+        transition: width 0.7s ease, background 0.4s ease;
+      }
+      .goal-fill.done { background: #578a5e; }
+      .goal-bar-row {
+        display: flex; justify-content: space-between;
+        font-size: 0.62rem; font-weight: 500; color: #9e7c66;
+      }
+      .goal-bar-row.done { color: #578a5e; font-weight: 700; }
+
+      /* ═══ MAIN ═══ */
+      .main { padding: 12px 14px 4px; }
+
+      /* ─── 2-tab selector ─── */
+      .tabs {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 3px; background: rgba(180,100,60,0.08);
+        border-radius: 11px; padding: 3px; margin-bottom: 12px;
+      }
+      .tab {
+        padding: 9px 4px; border: none; border-radius: 9px;
+        background: transparent; font-size: 0.80rem; font-weight: 600;
+        color: #9e7c66; cursor: pointer; transition: all 0.15s; font-family: inherit;
+      }
+      .tab.active { background: #fff; color: #1e1916; box-shadow: 0 1px 5px rgba(0,0,0,0.10); }
+      .tab:not(.active):hover { color: #1e1916; background: rgba(255,255,255,0.45); }
+
+      /* ─── Text input ─── */
+      .text-input {
+        width: 100%; background: rgba(255,248,238,0.85);
+        border: 1px solid rgba(201,101,74,0.15); border-radius: 9px;
+        padding: 8px 11px; font-size: 0.82rem; color: #1e1916;
+        outline: none; font-family: inherit; margin-bottom: 10px;
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .text-input::placeholder { color: #c0aa96; }
+      .text-input:focus { border-color: rgba(201,101,74,0.36); background: #fffaf4; }
+
+      /* ─── Section subhead ─── */
+      .subhead {
+        font-size: 0.57rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.10em; color: #9e7c66; margin-bottom: 7px;
+      }
+
+      /* ─── Goal inputs (reading tab) ─── */
+      #goalSection { margin-bottom: 18px; }
+      .goal-inputs-row { display: flex; align-items: center; gap: 5px; }
+      .num-input {
+        width: 50px; background: #fff8ee; border: 1px solid rgba(201,101,74,0.18);
+        border-radius: 7px; padding: 5px 6px; font-size: 0.92rem; font-weight: 700;
+        color: #1e1916; text-align: center; outline: none; font-family: inherit;
+        font-variant-numeric: tabular-nums; transition: border-color 0.15s;
+      }
+      .num-input:focus { border-color: rgba(201,101,74,0.40); }
+      .num-unit { font-size: 0.72rem; color: #9e7c66; font-weight: 600; }
+      .goal-hint { font-size: 0.61rem; color: #c0aa96; margin-left: 4px; }
+
+      /* ─── Pomo settings (pomo tab) ─── */
+      .pomo-cfg {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 8px; margin-bottom: 18px;
+      }
+      .pomo-cfg-full { grid-column: 1 / -1; }
+      .pomo-cfg-card {
+        background: rgba(255,248,238,0.85); border: 1px solid rgba(201,101,74,0.12);
+        border-radius: 10px; padding: 9px 11px;
+      }
+      .pomo-cfg-label {
+        font-size: 0.57rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.10em; color: #9e7c66; margin-bottom: 5px;
+      }
+      .pomo-cfg-row { display: flex; align-items: baseline; gap: 5px; }
+      .pomo-num { width: 54px; }
+
+      /* ─── Start button ─── */
+      .btn-start {
+        width: 100%; padding: 11px; border: none; border-radius: 11px;
+        font-size: 0.88rem; font-weight: 700; cursor: pointer;
+        font-family: inherit; letter-spacing: 0.01em;
+        transition: filter 0.15s, transform 0.10s;
+      }
+      .btn-start:hover  { filter: brightness(1.07); }
+      .btn-start:active { transform: scale(0.98); }
+      .btn-start.mode-reading { background: #3e7e96; color: #fff; }
+      .btn-start.mode-pomo    { background: #c49b3c; color: #fff; }
+
+      /* ═══ READING RUNNING PANEL ═══ */
+      .running-card {
+        background: #fff8ee; border: 1px solid rgba(62,126,150,0.16);
+        border-radius: 14px; padding: 14px 15px;
+      }
+      .mode-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 0.59rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.11em; padding: 3px 8px; border-radius: 5px; margin-bottom: 7px;
+        background: rgba(62,126,150,0.11); color: #2a6680;
+      }
+      .running-name {
+        font-size: 0.90rem; font-weight: 600; color: #1e1916;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px;
+      }
+      .session-elapsed {
+        font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em;
+        color: #3e7e96; font-variant-numeric: tabular-nums; margin-bottom: 11px;
+      }
+
+      /* Goal indicator inside running card */
+      .run-goal-wrap { margin-bottom: 11px; }
+      .run-goal-text {
+        font-size: 0.68rem; color: #9e7c66; font-weight: 500; margin-bottom: 5px;
+      }
+      .run-goal-text.done { color: #578a5e; font-weight: 700; }
+
+      .btn-stop-session {
+        width: 100%; padding: 9px; border-radius: 9px; font-family: inherit;
+        font-size: 0.82rem; font-weight: 700; cursor: pointer;
+        background: rgba(201,101,74,0.08); border: 1.5px solid rgba(201,101,74,0.20);
+        color: #a8432e; transition: background 0.15s;
+      }
+      .btn-stop-session:hover { background: rgba(201,101,74,0.15); }
+
+      /* ═══ POMO ACTIVE PANEL ═══ */
+      .pomo-active-card {
+        background: #fff8ee; border: 1px solid rgba(201,101,74,0.12);
+        border-radius: 16px; padding: 18px 15px 14px; text-align: center;
+      }
+      .pomo-badge {
+        display: inline-block; font-size: 0.58rem; font-weight: 700;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        padding: 3px 10px; border-radius: 5px; margin-bottom: 10px;
+        background: rgba(201,101,74,0.11); color: #a8432e; transition: all 0.3s;
+      }
+      .pomo-badge.break { background: rgba(62,126,150,0.12); color: #2a6680; }
+      .pomo-session-name {
+        font-size: 0.73rem; color: #9e7c66; margin-bottom: 6px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .pomo-big-time {
+        font-size: 3.2rem; font-weight: 800; letter-spacing: -0.03em;
+        color: #1e1916; font-variant-numeric: tabular-nums;
+        line-height: 1.0; margin-bottom: 6px; transition: color 0.3s;
+      }
+      .pomo-big-time.break { color: #3e7e96; }
+      .pomo-cycles { font-size: 0.70rem; color: #9e7c66; margin-bottom: 14px; }
+      /* ─── Reading running controls ─── */
+      .run-ctrl-row { display: flex; gap: 6px; margin-bottom: 8px; }
+      .btn-rc {
+        flex: 1; padding: 8px 6px; border-radius: 9px; font-family: inherit;
+        font-size: 0.76rem; font-weight: 700; cursor: pointer;
+        background: rgba(240,228,210,0.65); border: 1.5px solid rgba(201,101,74,0.14);
+        color: #1e1916; transition: background 0.15s;
+      }
+      .btn-rc:hover { background: rgba(240,228,210,1); }
+      .btn-rc.btn-pomo-launch { background: rgba(196,155,60,0.12); border-color: rgba(196,155,60,0.25); color: #8a6a1a; }
+      .btn-rc.btn-pomo-launch:hover { background: rgba(196,155,60,0.22); }
+
+      .pomo-ctrl-row { display: grid; grid-template-columns: 1fr 80px; gap: 6px; }
+      .btn-pc {
+        padding: 9px 6px; border: 1.5px solid rgba(201,101,74,0.14); border-radius: 9px;
+        background: rgba(240,228,210,0.65); font-size: 0.76rem; font-weight: 700;
+        color: #1e1916; cursor: pointer; font-family: inherit; transition: background 0.15s;
+      }
+      .btn-pc:hover { background: rgba(240,228,210,1); }
+      .btn-pc.btn-end { color: #a8432e; border-color: rgba(201,101,74,0.22); }
+
+      /* ═══ FOOTER ═══ */
+      .footer {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 14px 13px;
+        border-top: 1px solid rgba(180,100,60,0.08); margin-top: 8px;
+      }
+      .footer-note { font-size: 0.62rem; color: #c0aa96; }
+      .btn-clear {
+        font-size: 0.70rem; font-weight: 600; color: #9e7c66;
+        background: transparent; border: 1px solid rgba(158,124,102,0.18);
+        border-radius: 7px; padding: 4px 9px; cursor: pointer; font-family: inherit;
+        transition: all 0.15s;
+      }
+      .btn-clear:hover { color: #a8432e; border-color: rgba(201,101,74,0.25); background: rgba(201,101,74,0.06); }
+      .btn-clear.confirm { color: #a8432e; border-color: rgba(201,101,74,0.35); background: rgba(201,101,74,0.08); font-weight: 700; }
+    </style>
+  </head>
+  <body>
+
+    <!-- ═══ HEADER ═══ -->
+    <div class="header">
+      <img src="icons/icon48.png" alt="" />
+      <span class="header-name">Productivity Clock</span>
+      <button class="btn-stats" id="openBtn">Full Stats →</button>
+    </div>
+
+    <!-- ═══ TODAY CARD (hidden during active sessions) ═══ -->
+    <div class="today-card" id="todayCard">
+      <div class="today-eyebrow">Today's Focus</div>
+      <div class="today-value" id="todayVal">—</div>
+      <span class="status-chip" id="statusChip">
+        <span class="status-dot"></span>
+        <span class="status-label" id="statusLabel">Loading…</span>
+      </span>
+      <!-- Goal progress bar — hidden until goal > 0 -->
+      <div class="goal-bar-wrap" id="goalBarWrap" hidden>
+        <div class="goal-track">
+          <div class="goal-fill" id="goalFill"></div>
+        </div>
+        <div class="goal-bar-row" id="goalBarRow">
+          <span id="goalBarLeft">—</span>
+          <span id="goalBarRight">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MAIN ═══ -->
+    <div class="main">
+
+      <!-- ─── IDLE PANEL ─── -->
+      <div id="idlePanel">
+
+        <!-- 2-tab mode selector -->
+        <div class="tabs">
+          <button class="tab active" data-mode="reading">📖 Reading</button>
+          <button class="tab" data-mode="pomo">🍅 Pomodoro</button>
+        </div>
+
+        <!-- Session name (both modes) -->
+        <input class="text-input" id="sessionName"
+               placeholder="Session name (optional)" maxlength="60" />
+
+        <!-- Reading-only: daily goal inputs -->
+        <div id="goalSection">
+          <div class="subhead">Daily Goal</div>
+          <div class="goal-inputs-row">
+            <input class="num-input" id="goalH" type="number" min="0" max="23" value="0" />
+            <span class="num-unit">h</span>
+            <input class="num-input" id="goalM" type="number" min="0" max="59" value="0" />
+            <span class="num-unit">m</span>
+            <span class="goal-hint">(0 = no goal)</span>
+          </div>
+        </div>
+
+        <!-- Pomo-only: work / break time + loop break + loops -->
+        <div class="pomo-cfg" id="pomoCfg" hidden>
+          <div class="pomo-cfg-card">
+            <div class="pomo-cfg-label">Work time</div>
+            <div class="pomo-cfg-row">
+              <input class="num-input pomo-num" id="pomoWorkMin"
+                     type="number" min="1" max="120" value="25" />
+              <span class="num-unit">min</span>
+            </div>
+          </div>
+          <div class="pomo-cfg-card">
+            <div class="pomo-cfg-label">Break time</div>
+            <div class="pomo-cfg-row">
+              <input class="num-input pomo-num" id="pomoBreakMin"
+                     type="number" min="0" max="60" value="5" />
+              <span class="num-unit">min</span>
+            </div>
+          </div>
+          <div class="pomo-cfg-card pomo-cfg-full">
+            <div class="pomo-cfg-label">Loop break &nbsp;<span class="goal-hint">(gap between cycles)</span></div>
+            <div class="pomo-cfg-row">
+              <input class="num-input pomo-num" id="pomoLoopBreak"
+                     type="number" min="0" max="60" value="0" />
+              <span class="num-unit">min</span>
+            </div>
+          </div>
+          <div class="pomo-cfg-card pomo-cfg-full">
+            <div class="pomo-cfg-label">Loops &nbsp;<span class="goal-hint" id="pomoLoopsHint">(0 = ∞ infinite)</span></div>
+            <div class="pomo-cfg-row">
+              <input class="num-input pomo-num" id="pomoLoops"
+                     type="number" min="0" max="20" value="0" />
+              <span class="num-unit">cycles</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-start mode-reading" id="startBtn">📖 Start Reading Session</button>
+      </div>
+
+      <!-- ─── READING RUNNING PANEL ─── -->
+      <div id="runningPanel" hidden>
+        <div class="running-card">
+          <div class="mode-pill">📖 Reading</div>
+          <div class="running-name" id="runningName">Reading session</div>
+          <div class="session-elapsed" id="sessionElapsed">0:00</div>
+          <!-- Goal progress (only when goal is set) -->
+          <div class="run-goal-wrap" id="runGoalWrap" hidden>
+            <div class="run-goal-text" id="runGoalText">—</div>
+            <div class="goal-track">
+              <div class="goal-fill" id="runGoalFill"></div>
+            </div>
+          </div>
+          <div class="run-ctrl-row">
+            <button class="btn-rc" id="pauseBtn">⏸&nbsp;Pause</button>
+            <button class="btn-rc btn-pomo-launch" id="pomoModeBtn">🍅&nbsp;Pomodoro</button>
+          </div>
+          <!-- Inline pomo settings — shown when user taps 🍅 Pomodoro -->
+          <div id="pomoInline" hidden>
+            <div class="pomo-cfg" style="margin: 0 0 8px;">
+              <div class="pomo-cfg-card">
+                <div class="pomo-cfg-label">Work time</div>
+                <div class="pomo-cfg-row">
+                  <input class="num-input pomo-num" id="pomoInlineWork"
+                         type="number" min="1" max="120" value="25" />
+                  <span class="num-unit">min</span>
+                </div>
+              </div>
+              <div class="pomo-cfg-card">
+                <div class="pomo-cfg-label">Break time</div>
+                <div class="pomo-cfg-row">
+                  <input class="num-input pomo-num" id="pomoInlineBreak"
+                         type="number" min="0" max="60" value="5" />
+                  <span class="num-unit">min</span>
+                </div>
+              </div>
+              <div class="pomo-cfg-card pomo-cfg-full">
+                <div class="pomo-cfg-label">Loop break &nbsp;<span class="goal-hint">(between cycles)</span></div>
+                <div class="pomo-cfg-row">
+                  <input class="num-input pomo-num" id="pomoInlineLoopBreak"
+                         type="number" min="0" max="60" value="0" />
+                  <span class="num-unit">min</span>
+                </div>
+              </div>
+              <div class="pomo-cfg-card pomo-cfg-full">
+                <div class="pomo-cfg-label">Loops &nbsp;<span class="goal-hint" id="pomoInlineLoopsHint">(0 = ∞ infinite)</span></div>
+                <div class="pomo-cfg-row">
+                  <input class="num-input pomo-num" id="pomoInlineLoops"
+                         type="number" min="0" max="20" value="0" />
+                  <span class="num-unit">cycles</span>
+                </div>
+              </div>
+            </div>
+            <button class="btn-start mode-pomo" id="pomoInlineStart"
+                    style="font-size:0.82rem;padding:9px;margin-bottom:8px;">
+              🍅&nbsp;Start Pomodoro
+            </button>
+          </div>
+          <button class="btn-stop-session" id="stopBtn">■&nbsp; Stop Session</button>
+        </div>
+      </div>
+
+      <!-- ─── POMO ACTIVE PANEL ─── -->
+      <div id="pomoPanel" hidden>
+        <div class="pomo-active-card">
+          <div class="pomo-badge" id="pomoPhaseBadge">FOCUS</div>
+          <div class="pomo-session-name" id="pomoSessionName" hidden></div>
+          <div class="pomo-big-time" id="pomoTimer">25:00</div>
+          <div class="pomo-cycles" id="pomoCycles">0 cycles completed</div>
+          <div class="pomo-ctrl-row">
+            <button class="btn-pc" id="pomoPauseBtn">⏸&nbsp;Pause</button>
+            <button class="btn-pc btn-end" id="pomoEndBtn">■&nbsp;End</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+      <span class="footer-note">Productivity Clock • v1.0.0</span>
+      <button class="btn-clear" id="clearBtn">🗑&nbsp;Clear Today</button>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
