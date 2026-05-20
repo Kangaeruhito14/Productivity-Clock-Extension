@@ -1525,7 +1525,8 @@ function refreshHistory() {
   for (let i = 0; i < 7; i++) {
     const d = new Date(today); d.setDate(today.getDate() - i);
     const key = getLocalDateKey(d), ms = getLiveDayMs(key), h = hoursFromMs(ms), r = ratingForHours(h, currentGoalHours());
-    const labels = (state.data.labels && state.data.labels[key]) || [];
+    const rawLabel = state.data.labels && state.data.labels[key];
+    const labels = Array.isArray(rawLabel) ? rawLabel : (rawLabel ? [rawLabel] : []);
     items.push({ key, hours: formatTime(ms), label: r.label, className: r.className, tags: labels });
   }
   elements.historyList.innerHTML = "";
