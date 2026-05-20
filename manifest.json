@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Productivity Clock",
+  "short_name": "Prod. Clock",
+  "version": "1.0.0",
+  "description": "Track your reading & focus sessions. Pomodoro timer, daily goals, monthly reports — all in one clean interface.",
+
+  "permissions": ["storage", "alarms", "notifications"],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Productivity Clock"
+  },
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self';"
+  }
+}
