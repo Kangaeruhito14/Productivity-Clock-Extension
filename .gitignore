@@ -1,0 +1,12 @@
+# Design exports and submission ZIPs — not part of the extension source
+Untitled design/
+Untitled design.zip
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
