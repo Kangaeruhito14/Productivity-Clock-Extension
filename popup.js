@@ -371,7 +371,7 @@ function renderRunningPanel(todayMs) {
 
   // Pause button; Pomo Mode button + inline settings reset when state changes
   $("pauseBtn").textContent    = isPaused ? "▶ Resume" : "⏸ Pause";
-  $("pomoModeBtn").hidden      = isPaused;
+  $("pomoModeBtn").hidden      = false;
   $("pomoModeBtn").textContent = "🍅 Pomodoro";
   $("pomoInline").hidden       = true;
 
