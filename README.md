@@ -4,7 +4,7 @@ A lightweight, privacy-first Chrome extension for tracking reading sessions and 
 
 > **Companion website →** [productive-clock.netlify.app](https://productive-clock.netlify.app/)
 > Full web app with analog clock, themes, productivity calendar, monthly reports, and streaks.
-> The extension and website share the same local storage keys, so data recorded in the extension appears on the website automatically in the same browser — no sync needed.
+> The extension uses `chrome.storage.local` (extension-only storage) while the website uses `window.localStorage` (web page storage). They are separate — data recorded in one does not appear in the other.
 
 ---
 
