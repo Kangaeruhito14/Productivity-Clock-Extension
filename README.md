@@ -1,6 +1,6 @@
 # Productivity Clock — Chrome Extension
 
-A lightweight, privacy-first Chrome extension for tracking reading sessions and Pomodoro cycles — directly from your browser toolbar. All data is stored locally in Chrome. Nothing is ever sent to any server.
+A lightweight, privacy-first Chrome extension for tracking work sessions and Pomodoro cycles — directly from your browser toolbar. All data is stored locally in Chrome. Nothing is ever sent to any server.
 
 > **Companion website →** [productive-clock.netlify.app](https://productive-clock.netlify.app/)
 > Full web app with analog clock, themes, productivity calendar, monthly reports, and streaks.
@@ -10,8 +10,8 @@ A lightweight, privacy-first Chrome extension for tracking reading sessions and 
 
 ## Features
 
-### Reading Mode
-- Count-up timer for reading and study sessions
+### Work Mode
+- Count-up timer for any type of work — reading, coding, designing, writing, and more
 - Optional session name
 - Daily focus goal (hours + minutes) with a live progress bar
 - Pause and resume without losing a second — every moment is banked accurately
@@ -24,8 +24,8 @@ A lightweight, privacy-first Chrome extension for tracking reading sessions and 
 - **Cycle limit** — choose exactly how many cycles to run, or set to 0 for infinite. Maximum is auto-calculated from your chosen times so it never exceeds 24 hours
 - Native Chrome desktop notifications at the end of every phase
 
-### Pomodoro Inside Reading
-Start a Pomodoro directly from an active reading session without interrupting it. Configure settings inline, start, and both timers contribute to the same daily total.
+### Pomodoro Inside Work Session
+Start a Pomodoro directly from an active work session without interrupting it. Configure settings inline, start, and both timers contribute to the same daily total.
 
 ### Live Icon Badge
 The extension icon reflects your current state at all times — even when the popup is closed.
@@ -36,8 +36,8 @@ The extension icon reflects your current state at all times — even when the po
 | ☕ | Blue | Pomodoro break |
 | ⏺ | Purple | Loop break phase |
 | ⏸ | Warm grey | Pomodoro paused |
-| ▶ | Teal | Reading session running |
-| ⏸ | Muted teal | Reading session paused |
+| ▶ | Teal | Work session running |
+| ⏸ | Muted teal | Work session paused |
 | *(blank)* | — | Idle |
 
 ### Daily Stats
@@ -93,7 +93,7 @@ productivity-clock-extension/
 ├── manifest.json       — MV3 extension manifest
 ├── background.js       — Service worker: timer banking, Pomodoro alarms, badge, notifications
 ├── popup.html          — Extension popup UI
-├── popup.js            — Popup logic: reading timer, Pomodoro controls, goal, render
+├── popup.js            — Popup logic: work timer, Pomodoro controls, goal, render
 ├── index.html          — Full stats page (opens via "Full Stats →" button)
 ├── script.js           — Stats page logic
 ├── styles.css          — Stats page styles

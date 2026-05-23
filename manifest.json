@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Productivity Clock",
   "short_name": "Prod. Clock",
-  "version": "1.0.0",
-  "description": "Track your reading & focus sessions. Pomodoro timer, daily goals, monthly reports — all in one clean interface.",
+  "version": "1.0.1",
+  "description": "Track your work & focus sessions. Pomodoro timer, daily goals, monthly reports — all in one clean interface.",
 
   "permissions": ["storage", "alarms", "notifications"],
 

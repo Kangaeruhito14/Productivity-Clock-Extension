@@ -100,7 +100,7 @@
         <div class="card-header">
           <div>
             <h2>Productivity Timer</h2>
-            <p>Start when you begin reading, stop when you finish.</p>
+            <p>Start when you begin working, stop when you finish.</p>
           </div>
           <span class="pill" id="timerStatus">Paused</span>
         </div>
@@ -113,7 +113,7 @@
         </div>
 
         <div class="timer-actions">
-          <button class="btn primary" id="startBtn">Start Reading</button>
+          <button class="btn primary" id="startBtn">Start Working</button>
           <button class="btn ghost" id="stopBtn" disabled>Stop</button>
           <button class="btn subtle" id="pomoToggleBtn">Pomodoro</button>
           <button class="btn subtle" id="clearTodayBtn">Clear Today</button>
@@ -432,7 +432,7 @@
       </div>
     </div>
     <!-- Reading Mode Overlay -->
-    <div class="reading-overlay" id="readingOverlay" role="dialog" aria-label="Reading session" aria-hidden="true" hidden inert>
+    <div class="reading-overlay" id="readingOverlay" role="dialog" aria-label="Working session" aria-hidden="true" hidden inert>
 
       <!-- State 1: Reading main (single ring view) -->
       <div class="reading-main" id="readingMain">
@@ -442,7 +442,7 @@
             <circle class="rring-fill" id="readingRingFill" cx="100" cy="100" r="86"/>
           </svg>
           <div class="reading-center">
-            <span class="reading-mode-lbl">READING</span>
+            <span class="reading-mode-lbl">WORKING</span>
             <div class="reading-elapsed" id="readingElapsed">00:00</div>
             <span class="reading-sub-lbl">session time</span>
           </div>
@@ -494,7 +494,7 @@
       <!-- State 2: Split view (reading + focus side by side) -->
       <div class="reading-split" id="readingSplit" hidden>
         <div class="split-reading-panel" id="splitReadingPanel">
-          <p class="split-panel-label">READING</p>
+          <p class="split-panel-label">WORKING</p>
           <div class="split-ring-wrap">
             <svg viewBox="0 0 160 160" class="split-ring-svg" aria-hidden="true">
               <circle class="srring-track" cx="80" cy="80" r="66"/>
@@ -526,7 +526,7 @@
             <p class="spd-cycles" id="splitDoneCycles">1 cycle completed</p>
             <div class="spd-actions">
               <button class="rov-btn rov-primary" id="splitSameTimeBtn">Same time</button>
-              <button class="rov-btn rov-subtle"  id="splitEndPomoBtn">Continue reading</button>
+              <button class="rov-btn rov-subtle"  id="splitEndPomoBtn">Continue working</button>
             </div>
           </div>
         </div>

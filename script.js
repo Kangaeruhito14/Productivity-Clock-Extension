@@ -982,7 +982,7 @@ function updatePomoDisplay() {
     elements.pomoSection.hidden = true;
     elements.pomoToggleBtn.textContent = "Pomodoro";
     elements.pomoToggleBtn.classList.remove("pomo-active");
-    if (elements.startBtn && !state.data.running.isRunning) elements.startBtn.textContent = "Start Reading";
+    if (elements.startBtn && !state.data.running.isRunning) elements.startBtn.textContent = "Start Working";
     return;
   }
   elements.pomoSection.hidden = false;
@@ -1188,7 +1188,7 @@ function updateSplitSelection() {
   }
   if (panelStopBtn) {
     panelStopBtn.hidden = sel === null;
-    if (sel) panelStopBtn.textContent = sel === "reading" ? "Stop Reading" : "Stop Focus";
+    if (sel) panelStopBtn.textContent = sel === "reading" ? "Stop Working" : "Stop Focus";
   }
 }
 
@@ -1517,7 +1517,7 @@ function updateSessionDisplay() {
   }
   elements.startBtn.disabled = run.isRunning;
   elements.stopBtn.disabled  = !run.isRunning;
-  elements.startBtn.textContent = run.isRunning ? "Running…" : (state.pomo.enabled ? "Start Focus" : "Start Reading");
+  elements.startBtn.textContent = run.isRunning ? "Running…" : (state.pomo.enabled ? "Start Focus" : "Start Working");
 }
 
 function refreshHistory() {

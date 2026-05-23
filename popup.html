@@ -117,7 +117,7 @@
         letter-spacing: 0.10em; color: #9e7c66; margin-bottom: 7px;
       }
 
-      /* ─── Goal inputs (reading tab) ─── */
+      /* ─── Goal inputs (work tab) ─── */
       #goalSection { margin-bottom: 18px; }
       .goal-inputs-row { display: flex; align-items: center; gap: 5px; }
       .num-input {
@@ -156,10 +156,10 @@
       }
       .btn-start:hover  { filter: brightness(1.07); }
       .btn-start:active { transform: scale(0.98); }
-      .btn-start.mode-reading { background: #3e7e96; color: #fff; }
+      .btn-start.mode-work { background: #3e7e96; color: #fff; }
       .btn-start.mode-pomo    { background: #c49b3c; color: #fff; }
 
-      /* ═══ READING RUNNING PANEL ═══ */
+      /* ═══ WORK RUNNING PANEL ═══ */
       .running-card {
         background: #fff8ee; border: 1px solid rgba(62,126,150,0.16);
         border-radius: 14px; padding: 14px 15px;
@@ -217,7 +217,7 @@
       }
       .pomo-big-time.break { color: #3e7e96; }
       .pomo-cycles { font-size: 0.70rem; color: #9e7c66; margin-bottom: 14px; }
-      /* ─── Reading running controls ─── */
+      /* ─── Work running controls ─── */
       .run-ctrl-row { display: flex; gap: 6px; margin-bottom: 8px; }
       .btn-rc {
         flex: 1; padding: 8px 6px; border-radius: 9px; font-family: inherit;
@@ -292,7 +292,7 @@
 
         <!-- 2-tab mode selector -->
         <div class="tabs">
-          <button class="tab active" data-mode="reading">📖 Reading</button>
+          <button class="tab active" data-mode="work">⏱️ Work</button>
           <button class="tab" data-mode="pomo">🍅 Pomodoro</button>
         </div>
 
@@ -348,14 +348,14 @@
           </div>
         </div>
 
-        <button class="btn-start mode-reading" id="startBtn">📖 Start Reading Session</button>
+        <button class="btn-start mode-work" id="startBtn">⏱️ Start Work Session</button>
       </div>
 
-      <!-- ─── READING RUNNING PANEL ─── -->
+      <!-- ─── WORK RUNNING PANEL ─── -->
       <div id="runningPanel" hidden>
         <div class="running-card">
-          <div class="mode-pill">📖 Reading</div>
-          <div class="running-name" id="runningName">Reading session</div>
+          <div class="mode-pill">⏱️ Work</div>
+          <div class="running-name" id="runningName">Work session</div>
           <div class="session-elapsed" id="sessionElapsed">0:00</div>
           <!-- Goal progress (only when goal is set) -->
           <div class="run-goal-wrap" id="runGoalWrap" hidden>
@@ -431,7 +431,7 @@
 
     <!-- ═══ FOOTER ═══ -->
     <div class="footer">
-      <span class="footer-note">Productivity Clock • v1.0.0</span>
+      <span class="footer-note">Productivity Clock • v1.0.1</span>
       <button class="btn-clear" id="clearBtn">🗑&nbsp;Clear Today</button>
     </div>
 

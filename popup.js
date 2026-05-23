@@ -1,4 +1,4 @@
-// popup.js — two distinct modes: Reading (count-up) + Pomodoro (countdown)
+// popup.js — two distinct modes: Work (count-up) + Pomodoro (countdown)
 // Both accumulate to the same daily total. Goal tracks that daily total.
 
 const STORAGE_KEY    = "productivity-clock-data-v1";
@@ -172,7 +172,7 @@ function getLiveDayMs(d) {
   } catch { return 0; }
 }
 
-// Elapsed time for this reading session — supports pause/resume via sessionBankedMs
+// Elapsed time for this work session — supports pause/resume via sessionBankedMs
 function getSessionElapsedMs(d) {
   try {
     const r      = d?.running;
@@ -192,7 +192,7 @@ function getSessionElapsedMs(d) {
 let data       = null;
 let pomo       = null;
 let goalHours  = 0;          // decimal hours; 0 = no goal set
-let activeMode = "reading";  // "reading" | "pomo"
+let activeMode = "work";  // "work" | "pomo"
 let clearPhase = 0;
 let clearTimer = null;
 
@@ -244,14 +244,14 @@ function syncTabs() {
     t.classList.toggle("active", t.dataset.mode === activeMode)
   );
 
-  const isReading = activeMode === "reading";
-  $("goalSection").hidden = !isReading;
-  $("pomoCfg").hidden     = isReading;
+  const isWork = activeMode === "work";
+  $("goalSection").hidden = !isWork;
+  $("pomoCfg").hidden     = isWork;
 
   const btn = $("startBtn");
-  if (isReading) {
-    btn.className   = "btn-start mode-reading";
-    btn.textContent = "📖 Start Reading Session";
+  if (isWork) {
+    btn.className   = "btn-start mode-work";
+    btn.textContent = "⏱️ Start Work Session";
   } else {
     btn.className   = "btn-start mode-pomo";
     btn.textContent = "🍅 Start Pomodoro";
@@ -309,7 +309,7 @@ function render() {
   // Goal bar in today card (only matters when card is visible)
   if (!sessActive && !pomoRunning) renderGoalBar(todayMs);
 
-  // Which panel to show — pomo takes priority; reading panel shows for both running + paused
+  // Which panel to show — pomo takes priority; work panel shows for both running + paused
   if (pomoRunning) {
     showPanel("pomo");
     renderPomoPanel();
@@ -365,7 +365,7 @@ function syncGoalInputs() {
 function renderRunningPanel(todayMs) {
   const r        = data.running;
   const isPaused = !!r?.paused;
-  const lbl      = (r?.label || "📖 Reading").replace(/^📖\s*/, "").trim() || "Reading session";
+  const lbl      = (r?.label || "⏱️ Work").replace(/^⏱️\s*/, "").trim() || "Work session";
   $("runningName").textContent    = lbl;
   $("sessionElapsed").textContent = fmtCountdown(getSessionElapsedMs(data));
 
@@ -432,7 +432,7 @@ setInterval(() => {
     renderGoalBar(todayMs);
   }
 
-  // Reading running: update elapsed + goal bar (also when paused — elapsed is static but harmless)
+  // Work running: update elapsed + goal bar (also when paused — elapsed is static but harmless)
   if (!$("runningPanel").hidden && (data.running?.isRunning || data.running?.paused)) {
     $("sessionElapsed").textContent = fmtCountdown(getSessionElapsedMs(data));
     if (goalHours > 0 && !$("runGoalWrap").hidden) {
@@ -505,7 +505,7 @@ $("pomoBreakMin").addEventListener("change", applyPomoSettings);
 
 $("startBtn").addEventListener("click", async () => {
   if (activeMode === "pomo") await startPomo();
-  else await startReading();
+  else await startReading();  // work mode
 });
 
 async function startReading() {
@@ -513,7 +513,7 @@ async function startReading() {
     const d = await getData();
     if (d.running?.isRunning || d.running?.paused) return; // guard: already active
     const name  = ($("sessionName").value || "").trim().slice(0, 100);
-    const label = name ? `📖 ${name}` : "📖 Reading";
+    const label = name ? `⏱️ ${name}` : "⏱️ Work";
     const now   = new Date();
     d.running = {
       isRunning:       true,
@@ -584,14 +584,14 @@ async function startPomo() {
   } catch {}
 }
 
-// Launch pomo from within an active reading session — reading keeps running in background
+// Launch pomo from within an active work session — work keeps running in background
 // Uses in-memory pomo settings (updated by pomoInlineStart before this is called)
 async function startPomoFromReading() {
   try {
     if (pomo?.active) return;
     const d        = await getData();
     const rawLabel = d.running?.label || "";
-    const name     = rawLabel.replace(/^📖\s*/, "").trim();
+    const name     = rawLabel.replace(/^⏱️\s*/, "").trim();
     // Use in-memory settings — already updated by pomoInlineStart
     const focusSec    = clamp(pomo?.focusSec    || 1500, 60, 7200);
     const breakSec    = clamp(pomo?.breakSec    || 0,     0, 3600);
@@ -670,7 +670,7 @@ async function stopSession() {
 
 $("stopBtn").addEventListener("click", stopSession);
 
-// Pause / Resume reading session
+// Pause / Resume work session
 $("pauseBtn").addEventListener("click", async () => {
   try {
     const d = await getData();
@@ -709,7 +709,7 @@ $("pauseBtn").addEventListener("click", async () => {
   } catch {}
 });
 
-// Launch pomodoro from within reading session — toggles inline settings form
+// Launch pomodoro from within work session — toggles inline settings form
 $("pomoModeBtn").addEventListener("click", async () => {
   const inline = $("pomoInline");
   if (!inline.hidden) {
