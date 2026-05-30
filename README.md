@@ -64,7 +64,7 @@ No accounts. No servers. No analytics. No trackers. All data lives exclusively i
 
 ## Storage Keys
 
-The extension shares the same storage keys as the companion website, so both work with the same local data in the same browser.
+The extension and the companion website use the same key names, but their storage systems are completely separate. Extension data lives in `chrome.storage.local`, while website data lives in `window.localStorage`. They do not share data, and information recorded in one will not automatically appear in the other.
 
 | Key | Purpose |
 |-----|---------|
